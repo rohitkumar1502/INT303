@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Rajvi Translator</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <link rel="icon" href="favicon.ico?=2">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+        integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz"
+        crossorigin="anonymous"></script>
+       
+        <style>
+            body
+            {
+                background-color: #395144;
+            }
+            B
+            {
+               color:#48604f; 
+            }
+            .mx-4{
+                color: rgb(57, 9, 9);
+                position: relative;
+                left: 37%;
+            }
+          #inputText{
+            position: relative;
+            left: 24%;
+          }
+      
+        </style>
+</head>
+
+<body>
+    <div id="root">
+        <!-- heading about translation -->
+        <h1 class="text-center mt-3 text-primary" >Translate your text here from English to Hindi</h1>
+        <h4 class="mx-4">Enter some text to Translate</h4>
+        <!-- input area -->
+        <textarea name="" id="inputText" cols="20" rows="5" class="form-control m-3 w-50" placeholder="Enter text here"
+            v-model="inputText">  </textarea>
+
+        <!-- button -->
+       <center> <button type="button" class="btn btn-primary my-1 mx-3" @click="translate">Translate</button></center>
+
+        <!-- output area -->
+        <div v-show="show">
+            <B>
+           <center><h4 class="mx-3">Translated text</h4></center> 
+         <center><p style="background-color: #faf7f7;" class="border border-3 border-warning rounded mx-3 my-3 px-3 py-2">{{result}}</p></center>
+            </B>
+        </div>
+    </div>
+</body>
+<script>
+    new Vue({
+        el: "#root",
+        data: {
+            inputText: "",
+            result: "",
+            show: false,
+        },
+        watch: {
+            inputText: function (val) {
+                this.inputText = val;
+            }
+        },
+        methods: {
+            validate: function () {
+                if (this.inputText == "") {
+                    alert("Please enter some text to translate");
+                    return false;
+                }
+                return true;
+            },
+            translate() {
+                if (!this.validate()) {
+                    return;
+                }
+                const url = 'https://microsoft-translator-text.p.rapidapi.com/translate?to%5B0%5D=hi&api-version=3.0&profanityAction=NoAction&textType=plain';
+
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json',
+                        'X-RapidAPI-Key': 'b71f3df8dcmsh8ec188412370131p121c43jsn95bfb83a5bfb',
+                        'X-RapidAPI-Host': 'microsoft-translator-text.p.rapidapi.com'
+                    },
+
+                    // set body content to entered text
+                    body: JSON.stringify([{
+                        "Text": this.inputText
+                    }])
+                };
+
+                fetch(url, options)
+                    .then(res => res.json())
+                    .then(
+                        // set result to translated text
+                        json => {
+                            this.result = json[0].translations[0].text;
+                            console.log(this.result);
+                        },
+                    )
+                    .catch(err => console.error('error:' + err));
+
+                setTimeout(() => {
+                    this.show = true;
+                }, 2500);
+
+            }
+        }
+    })
+
+</script>
+
+</html>
